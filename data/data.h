@@ -62,7 +62,7 @@ public:
     // Postcondition: Creates a buffer with nBytes zeroed bytes.
     
     ~data();
-    // Postcondition: Destroys the buffer of bytes.
+    // Postcondition: Destroys the buffer of bytes and prevents memory leaks.
     
     /*** Representation of buffer of bytes ***/
     string digest();
@@ -76,7 +76,7 @@ public:
     // Precondition: Must have been loaded from a file.
     // Postcondition: Overrides the currently loaded file with the new bytes.
     
-    void saveToPath(string filePath);
+    void saveToPath(string fpath);
     // Precondition: A valid filePath must be passed.
     // Postcondition: Creates a new file in the specified path and saves it with the content of the data obj.
     
