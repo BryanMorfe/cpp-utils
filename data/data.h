@@ -85,7 +85,7 @@ public:
     // Precondition: The passed index must be <= than the buffer of bytes in the object.
     // Postcondition: Returns the byte in the specified index.
     
-    byte *bytesInRange(range r);
+    byte *bytesInRange(range &r);
     // Precondition: The range must be between 0 and buffer of bytes - 1.
     // Postcondition: Returns a buffer of bytes in the specified range.
     
@@ -103,7 +103,7 @@ public:
     // Postcondition: Inserts a given buffer of bytes in position i, by pushing existing bytes to the right.
     //                And resizes if necessary (and there is no capacity limit).
     
-    void overrideBytes(byte *b, range r);
+    void overrideBytes(byte *b, range &r);
     // Precondition: The range must be between 0 and buffer of bytes - 1.
     // Postcondition: Overrides the bytes in the range with the passed bytes.
     //                And resizes if necessary (and there is no capacity limit).
