@@ -117,21 +117,21 @@ public:
     unsigned int size();
     // Postcondition: Returns the size in bytes of the data obj.
     
-    unsigned int kSize();
+    double kSize();
     // Postcondition: Returns the size in kilobytes of the data obj.
     
-    unsigned int mSize();
+    double mSize();
     // Postcondition: Returns the size in megabytes of the data obj.
     
-    unsigned int gSize();
+    double gSize();
     // Postcondition: Returns the size in gigabytes of the data obj.
     
-    unsigned int Capacity();
+    double Capacity();
     // Postcondition: Returns the capacity of the buffer, or -1 if there is no maximum capacity.
     
 protected:
     void allocate();
-    // Postcondition: Doubles the capacity of the buffer of bytes.
+    // Postcondition: Doubles the capacity of the buffer.
     
 private:
     byte *bytes;            // A buffer (array) of bytes.
