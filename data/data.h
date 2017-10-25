@@ -136,7 +136,8 @@ protected:
 private:
     byte *bytes;            // A buffer (array) of bytes.
     int count;              // The amount of bytes.
-    int capacity;           // The maximum amount of bytes in the buffer.
+    int internalCapacity;   // The current buffer capacity.
+    int maxCapacity;        // The maximum allowed allocation of bytes.
     string filePath;        // An optional filePath if loaded from a file.
 };
 
