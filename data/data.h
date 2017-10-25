@@ -53,6 +53,10 @@ public:
     data(data &d);
     // Postcondition: Copies the content of the data object "d".
     
+    data(int n);
+    // Precondition: Must be > 0 or == -1.
+    // Postcondition: Sets maximum capacity to n, or no limitations if n = -1.
+    
     ~data();
     // Postcondition: Destroys the buffer of bytes.
     
@@ -84,19 +88,26 @@ public:
     /*** Bytes manipulation ***/
     void appendByte(byte b);
     // Postcondition: Appends a given byte to the end of the buffer.
+    //                And resizes if necessary (and there is no capacity limit).
     
     void prependByte(byte b);
     // Postcondition: Prepends a given byte to the beginning of the buffer.
+    //                And resizes if necessary (and there is no capacity limit).
     
     void insertBytes(byte *b, int i);
     // Precondition: The given index must not be larger than the size of the buffer.
     // Postcondition: Inserts a given buffer of bytes in position i, by pushing existing bytes to the right.
+    //                And resizes if necessary (and there is no capacity limit).
     
     void overrideBytes(byte *b, range r);
-    // Precondition: The lower bound of the range must be greater or equal to zero 0.
+    // Precondition: The range must be between 0 and buffer of bytes - 1.
     // Postcondition: Overrides the bytes in the range with the passed bytes.
-    //                If the passed buffer of bytes occupy more space than the specified range, the remaining bytes
-    //                will be inserted, but will not override the other bytes, rather push them to the right.
+    //                And resizes if necessary (and there is no capacity limit).
+    
+    void setCapacity(int n);
+    // Precondition: Capacity must be -1 (for no limit), or greater than 0.
+    // Postcondition: Sets a maximum capacity or no limits. If capacity is less than the current buffer the extra bytes lost after resizing.
+    //                Contents of old buffer is copied into new buffer of bytes with capacity n.
     
     /*** Size information ***/
     unsigned int size();
@@ -111,8 +122,16 @@ public:
     unsigned int gSize();
     // Postcondition: Returns the size in gigabytes of the data obj.
     
+    unsigned int Capacity();
+    // Postcondition: Returns the capacity of the buffer, or -1 if there is no maximum capacity.
+    
+protected:
+    void allocate();
+    // Postcondition: Doubles the capacity of the buffer of bytes.
+    
 private:
     byte *bytes;            // A buffer (array) of bytes.
     int count;              // The amount of bytes.
+    int capacity;           // The maximum amount of bytes in the buffer.
     string filePath;        // An optional filePath if loaded from a file.
 };
