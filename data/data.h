@@ -135,3 +135,5 @@ private:
     int capacity;           // The maximum amount of bytes in the buffer.
     string filePath;        // An optional filePath if loaded from a file.
 };
+
+#endif
