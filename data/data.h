@@ -57,6 +57,10 @@ public:
     // Precondition: Must be > 0 or == -1.
     // Postcondition: Sets maximum capacity to n, or no limitations if n = -1.
     
+    data(int nBytes);
+    // Precondition: Must be greater than 0;
+    // Postcondition: Creates a buffer with nBytes zeroed bytes.
+    
     ~data();
     // Postcondition: Destroys the buffer of bytes.
     
