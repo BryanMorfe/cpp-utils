@@ -15,7 +15,7 @@ class data {
     // Postcondition: Loads the content of a specified filePath.
     
     friend std::ostream& operator<<(std::ostream &out, data &d);
-    // Postcontidition: displays the amount of bytes in the data object.
+    // Postcontidition: Displays the amount of bytes in the data object.
     
     class range {
     public:
@@ -47,7 +47,7 @@ public:
     // Precondition: A file must exist in the specified path.
     // Postcondition: Loaded the content of the file in the specified path.
     
-    data(byte *b);
+    data(byte *b, int n);
     // Postcondition: Loads the buffer of passed bytes.
     
     data(data &d);
