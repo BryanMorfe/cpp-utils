@@ -98,12 +98,12 @@ public:
     // Postcondition: Prepends a given byte to the beginning of the buffer.
     //                And resizes if necessary (and there is no capacity limit).
     
-    void insertBytes(byte *b, int i);
+    void insertBytes(byte *b, int n, int i);
     // Precondition: The given index must not be larger than the size of the buffer.
     // Postcondition: Inserts a given buffer of bytes in position i, by pushing existing bytes to the right.
     //                And resizes if necessary (and there is no capacity limit).
     
-    void overrideBytes(byte *b, range &r);
+    void overrideBytes(byte *b, int n, range &r);
     // Precondition: The range must be between 0 and buffer of bytes - 1.
     // Postcondition: Overrides the bytes in the range with the passed bytes.
     //                And resizes if necessary (and there is no capacity limit).
