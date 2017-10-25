@@ -1,0 +1,443 @@
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <cstdlib>
+#include "data.h"
+
+/** Public Class Objects **/
+data::range::range(int l, int u)
+{
+    if (l < 0) {
+        std::cout << "Fatal error: Attempted to start a range at a value less than 0." << endl;
+        exit(1);
+    } else if (u <= l) {
+        std::cout << "Fatal error: Attempted to create an upper bound less or equal to lower bound." << endl;
+        exit(1);
+    }
+    
+    lower = l;
+    upper = u;
+    distance = u - l;
+}
+
+int data::range::lowerBound()
+{
+    return lower;
+}
+
+int data::range::upperBound()
+{
+    return upper;
+}
+
+int data::range::rangeDistance()
+{
+    return distance;
+}
+
+/** Public Member Functions **/
+
+/*** Constructors & Destructor ***/
+data::data()
+{
+    bytes = new byte;
+    count = -1;
+    maxCapacity = -1;
+    internalCapacity = 1;
+    filePath = "";
+}
+
+data::data(string fpath)
+{
+    std::ifstream ifile(fpath.c_str(), std::ifstream::binary);
+    
+    if (ifile)
+    {
+        ifile.seekg(0, ifile.end);
+        int length = ifile.tellg();
+        ifile.seekg(0, ifile.beg);
+        
+        bytes = new byte[length];
+        for(int i = 0; i < length; i++)
+        {
+            int b = ifile.get();
+            if (b < 0)
+                b += 256;
+            bytes[i] = b;
+        }
+        
+        ifile.close();
+        count = length;
+    }
+    else
+    {
+        std::cout << "Fatal error: Could not read file: " << fpath << endl;
+        exit(1);
+    }
+    
+    filePath = fpath;
+    maxCapacity = -1;
+    internalCapacity = count + 1;
+}
+
+data::data(byte *b, int n)
+{
+    bytes = new byte[n];
+    maxCapacity = -1;
+    internalCapacity = n;
+    filePath = "";
+    memcpy(bytes, b, n);
+    count = n - 1;
+}
+
+data::data(data &d)
+{
+    count = d.count;
+    maxCapacity = d.maxCapacity;
+    internalCapacity = d.internalCapacity;
+    filePath = d.filePath;
+    bytes = new byte[count + 1];
+    memcpy(bytes, d.bytes, count + 1);
+}
+
+data::data(int n)
+{
+    
+    if (n == < -1 || n == 0)
+    {
+        std::cout << "Fatal error: Attempted to set an invalid capacity." << endl;
+        exit(1);
+    }
+    
+    maxCapacity = n;
+    internalCapacity = n;
+    bytes = new byte[n];
+    count = -1;
+    filePath = "";
+}
+
+data::data(int nBytes)
+{
+    bytes = new byte[n];
+    count = n - 1;
+    for (int i = 0; i < n; i++)
+        bytes[i] = 0;
+    
+    filePath = "";
+    maxCapacity = -1;
+    internalCapacity = n;
+}
+
+data::~data()
+{
+    if (internalCapacity == 1)
+        delete bytes;
+    else
+        delete [] bytes;
+}
+
+/*** Representation of buffer of bytes ***/
+string data::digest()
+{
+    string d = "";
+    for(int i = 0; i <= count; i++) {
+        d += char(bytes[i]);
+    }
+    
+    return d;
+}
+
+string data::hexDigest()
+{
+    // Make compatible with with c++ 98
+}
+
+/*** File manipulation ***/
+void data::save()
+{
+    if (filePath == "")
+    {
+        std::cout << "Error: Attempted to save when file is not loaded." << endl;
+        std::cout << "Call \'saveToPath\' and provide a file path instead." << endl;
+    } else {
+        std::ofstream ofile(filePath.c_str, std::ofstream::binary);
+        
+        if(ofile)
+        {
+            string str = digest();
+            ofstream.write(str.c_str(), str.length());
+            ofstream.close();
+        }
+        else
+        {
+            std::cout << "Failed to save." << endl;
+        }
+    }
+    
+}
+
+void data::saveToPath(string fpath)
+{
+    filePath = fpath;
+    save();
+}
+
+/*** Bytes retrieval ***/
+byte data::operator[](int i)
+{
+    if (i < 0) {
+        std::cout << "Fatal error: Attempted to access an index less than 0." << endl;
+        exit(1);
+    }
+    
+    if (i > count) {
+        std::cout << "Fatal error: Index out of bounds." << endl;
+        exit(1);
+    }
+    
+    return bytes[i];
+}
+
+byte * data::bytesInRange(data::range &r)
+{
+    if (r.upperBound() > count){
+        std::cout << "Fatal error: Range out of bounds." << endl;
+        exit(1);
+    }
+    
+    byte *buffer = new byte[r.rangeDistance()];
+    
+    for(int i = 0; i < r.upperBound(); i++)
+        buffer[i] = bytes[i + r.lowerBound()];
+    
+    return buffer;
+}
+
+/*** Bytes manipulation ***/
+void data::appendByte(byte b)
+{
+    if (maxCapacity == -1)
+    {
+        if (count == internalCapacity - 1)
+            allocate();
+        bytes[++count] = b;
+        
+    }
+    else if (count == maxCapacity - 1)
+    {
+        std::cout << "Error: Attempted to append a byte when the buffer has no more capacity." << endl;
+    }
+    else
+    {
+        if (count == internalCapacity - 1)
+            allocate();
+        bytes[++count] = b;
+    }
+    
+}
+
+void data::prependByte(byte b)
+{
+    if (maxCapacity == -1)
+    {
+        if (count == internalCapacity - 1)
+            allocate();
+        
+        byte *tmp = new byte[internalCapacity];
+        tmp[0] = b;
+        for(int i = 0; i <= count; i++)
+            tmp[i + 1] = bytes[i];
+        count++;
+        delete [] bytes;
+        bytes = tmp;
+        
+    }
+    else if (count == maxCapacity - 1)
+    {
+        std::cout << "Error: Attempted to append a byte when the buffer has no more capacity." << endl;
+    }
+    else
+    {
+        if (count == internalCapacity - 1)
+            allocate();
+        
+        byte *tmp = new byte[internalCapacity];
+        tmp[0] = b;
+        for(int i = 0; i <= count; i++)
+            tmp[i + 1] = bytes[i];
+        count++;
+        delete [] bytes;
+        memcpy(bytes, tmp, count + 1);
+    }
+    
+}
+
+void data::insertBytes(byte *b, int n, int i)
+{
+    if (i < 0) {
+        std::cout << "Fatal error: Attempted to insert at an index less than 0." << endl;
+        exit(1);
+    }
+    
+    if (i > count) {
+        std::cout << "Fatal error: Index out of bounds." << endl;
+        exit(1);
+    }
+    
+    if (maxCapacity == -1)
+    {
+        while (count + n > internalCapacity - 1)
+            allocate();
+        byte *tmp = new byte[internalCapacity];
+        memcpy(tmp, bytes, i);
+        
+        for (int j = 0; j < n; j++)
+            tmp[j + i] = b[j];
+        
+        for(int j = i + 1; j < count; j++)
+            tmp[j + n - 1] = bytes[j];
+        
+        delete [] bytes;
+        bytes = tmp;
+    }
+    else if (count == maxCapacity - 1)
+    {
+        std::cout << "Error: Attempted to insert a buffer of bytes when there is no more capacity." << endl;
+    }
+    else if (count + n == maxCapacity - 1)
+    {
+        std::cout << "Error: Attempted to insert a buffer of bytes when it will exceed the capacity." << endl;
+    }
+    else
+    {
+        while (count + n > internalCapacity - 1)
+            allocate();
+        byte *tmp = new byte[internalCapacity];
+        memcpy(tmp, bytes, i);
+        
+        for (int j = 0; j < n; j++)
+            tmp[j + i] = b[j];
+        
+        for(int j = i + 1; j < count; j++)
+            tmp[j + n - 1] = bytes[j];
+        
+        delete [] bytes;
+        bytes = tmp;
+    }
+}
+
+void data::overrideBytes(byte *b, int n, range &r)
+{
+    if (r.upperBound() > count) {
+        std::cout << "Fatal error: Range out of bounds." << endl;
+        exit(1);
+    }
+    
+    if (maxCapacity == -1)
+    {
+        while (count + n > internalCapacity - 1)
+            allocate();
+        
+        byte *tmp = new byte[internalCapacity];
+        memcpy(tmp, bytes, i);
+        
+        for (int j = 0; j < n; j++)
+            tmp[j + i] = b[j];
+        
+        for(int j = i + 1; j < count; j++)
+            tmp[j + n - 1] = bytes[j];
+        
+        delete [] bytes;
+        bytes = tmp;
+    }
+    else if (count == maxCapacity - 1)
+    {
+        std::cout << "Error: Attempted to insert a buffer of bytes when there is no more capacity." << endl;
+    }
+    else if (count + n == maxCapacity - 1)
+    {
+        std::cout << "Error: Attempted to insert a buffer of bytes when it will exceed the capacity." << endl;
+    }
+    else
+    {
+        while (count + n > internalCapacity - 1)
+            allocate();
+        byte *tmp = new byte[internalCapacity];
+        memcpy(tmp, bytes, i);
+        
+        for (int j = 0; j < n; j++)
+            tmp[j + i] = b[j];
+        
+        for(int j = i + 1; j < count; j++)
+            tmp[j + n - 1] = bytes[j];
+        
+        delete [] bytes;
+        bytes = tmp;
+    }
+}
+
+void data::setCapacity(int n)
+{
+    
+    if (n < -1 || n == 0)
+    {
+        std::cout << "Fatal error: Attempted to set an invalid capacity." << endl;
+        exit(1);
+    }
+    
+    if (n == -1)
+    {
+        maxCapacity = -1;
+    }
+    else
+    {
+        byte *tmp = new byte[n];
+        (n < internalCapacity) ? memcpy(tmp, bytes, n) : memcpy(tmp, bytes, count + 1);
+        delete [] bytes;
+        bytes = tmp;
+        maxCapacity = n;
+        internalCapacity = n;
+    }
+    
+}
+
+/*** Size information ***/
+unsigned int data::size()
+{
+    return count + 1;
+}
+
+double data::kSize()
+{
+    return static_cast<double>(size) / 1024.0;
+}
+
+double data::mSize()
+{
+    return static_cast<double>(kSize) / 1024.0;
+}
+
+double data::gSize()
+{
+    return static_cast<double>(mSize) / 1024.0;
+}
+
+/** Private Member Functions **/
+
+void data::allocate()
+{
+    
+    int n = internalCapacity * 2;
+    
+    if (maxCapacity != -1)
+        n = max(maxCapacity, n); // Constraints to maxCapacity
+    
+    byte *tmp = new byte[n];
+    memcpy(tmp, bytes, count + 1);
+    delete [] bytes;
+    bytes = tmp;
+    internalCapacity = n;
+}
+
+
+/** Friend Functions **/
