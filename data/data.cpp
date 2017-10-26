@@ -289,7 +289,7 @@ void data::insertBytes(byte *b, int n, int i)
         exit(1);
     }
     
-    if (i > count) {
+    if (i > count + 1) {
         std::cout << "Fatal error: Index out of bounds." << std::endl;
         exit(1);
     }
@@ -318,7 +318,7 @@ void data::insertBytes(byte *b, int n, int i)
     {
         std::cout << "Error: Attempted to insert a buffer of bytes when there is no more capacity." << std::endl;
     }
-    else if (count + n == maxCapacity - 1)
+    else if (count + n == maxCapacity)
     {
         std::cout << "Error: Attempted to insert a buffer of bytes when it will exceed the capacity." << std::endl;
     }
@@ -378,7 +378,7 @@ void data::overrideBytes(byte *b, int n, range &r)
     {
         std::cout << "Error: Attempted to insert a buffer of bytes when there is no more capacity." << std::endl;
     }
-    else if (count + n == maxCapacity - 1)
+    else if (count + n - r.rangeDistance() - 1 == maxCapacity - 1)
     {
         std::cout << "Error: Attempted to insert a buffer of bytes when it will exceed the capacity." << std::endl;
     }
