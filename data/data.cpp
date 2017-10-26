@@ -10,10 +10,10 @@
 data::range::range(int l, int u)
 {
     if (l < 0) {
-        std::cout << "Fatal error: Attempted to start a range at a value less than 0." << endl;
+        std::cout << "Fatal error: Attempted to start a range at a value less than 0." << std::endl;
         exit(1);
     } else if (u <= l) {
-        std::cout << "Fatal error: Attempted to create an upper bound less or equal to lower bound." << endl;
+        std::cout << "Fatal error: Attempted to create an upper bound less or equal to lower bound." << std::endl;
         exit(1);
     }
     
@@ -73,7 +73,7 @@ data::data(std::string fpath)
     }
     else
     {
-        std::cout << "Fatal error: Could not read file: " << fpath << endl;
+        std::cout << "Fatal error: Could not read file: " << fpath << std::endl;
         exit(1);
     }
     
@@ -105,9 +105,9 @@ data::data(data &d)
 data::data(int n)
 {
     
-    if (n == < -1 || n == 0)
+    if (n < -1 || n == 0)
     {
-        std::cout << "Fatal error: Attempted to set an invalid capacity." << endl;
+        std::cout << "Fatal error: Attempted to set an invalid capacity." << std::endl;
         exit(1);
     }
     
@@ -156,7 +156,7 @@ std::string data::hexDigest()
     for(int i = 0; i <= count; i++)
         ss << std::hex << std::setfill('0') << std::setw(2) << bytes[i];
     
-    return ss.str()
+    return ss.str();
 }
 
 /*** File manipulation ***/
@@ -164,20 +164,20 @@ void data::save()
 {
     if (filePath == "")
     {
-        std::cout << "Error: Attempted to save when file is not loaded." << endl;
-        std::cout << "Call \'saveToPath\' and provide a file path instead." << endl;
+        std::cout << "Error: Attempted to save when file is not loaded." << std::endl;
+        std::cout << "Call \'saveToPath\' and provide a file path instead." << std::endl;
     } else {
-        std::ofstream ofile(filePath.c_str, std::ofstream::binary);
+        std::ofstream ofile(filePath.c_str(), std::ofstream::binary);
         
         if(ofile)
         {
             std::string str = digest();
-            ofstream.write(str.c_str(), str.length());
-            ofstream.close();
+            ofile.write(str.c_str(), str.length());
+            ofile.close();
         }
         else
         {
-            std::cout << "Failed to save." << endl;
+            std::cout << "Failed to save." << std::endl;
         }
     }
     
@@ -193,12 +193,12 @@ void data::saveToPath(std::string fpath)
 byte data::operator[](int i)
 {
     if (i < 0) {
-        std::cout << "Fatal error: Attempted to access an index less than 0." << endl;
+        std::cout << "Fatal error: Attempted to access an index less than 0." << std::endl;
         exit(1);
     }
     
     if (i > count) {
-        std::cout << "Fatal error: Index out of bounds." << endl;
+        std::cout << "Fatal error: Index out of bounds." << std::endl;
         exit(1);
     }
     
@@ -208,7 +208,7 @@ byte data::operator[](int i)
 byte * data::bytesInRange(data::range &r)
 {
     if (r.upperBound() > count){
-        std::cout << "Fatal error: Range out of bounds." << endl;
+        std::cout << "Fatal error: Range out of bounds." << std::endl;
         exit(1);
     }
     
@@ -232,7 +232,7 @@ void data::appendByte(byte b)
     }
     else if (count == maxCapacity - 1)
     {
-        std::cout << "Error: Attempted to append a byte when the buffer has no more capacity." << endl;
+        std::cout << "Error: Attempted to append a byte when the buffer has no more capacity." << std::endl;
     }
     else
     {
@@ -261,7 +261,7 @@ void data::prependByte(byte b)
     }
     else if (count == maxCapacity - 1)
     {
-        std::cout << "Error: Attempted to append a byte when the buffer has no more capacity." << endl;
+        std::cout << "Error: Attempted to append a byte when the buffer has no more capacity." << std::endl;
     }
     else
     {
@@ -282,12 +282,12 @@ void data::prependByte(byte b)
 void data::insertBytes(byte *b, int n, int i)
 {
     if (i < 0) {
-        std::cout << "Fatal error: Attempted to insert at an index less than 0." << endl;
+        std::cout << "Fatal error: Attempted to insert at an index less than 0." << std::endl;
         exit(1);
     }
     
     if (i > count) {
-        std::cout << "Fatal error: Index out of bounds." << endl;
+        std::cout << "Fatal error: Index out of bounds." << std::endl;
         exit(1);
     }
     
@@ -309,11 +309,11 @@ void data::insertBytes(byte *b, int n, int i)
     }
     else if (count == maxCapacity - 1)
     {
-        std::cout << "Error: Attempted to insert a buffer of bytes when there is no more capacity." << endl;
+        std::cout << "Error: Attempted to insert a buffer of bytes when there is no more capacity." << std::endl;
     }
     else if (count + n == maxCapacity - 1)
     {
-        std::cout << "Error: Attempted to insert a buffer of bytes when it will exceed the capacity." << endl;
+        std::cout << "Error: Attempted to insert a buffer of bytes when it will exceed the capacity." << std::endl;
     }
     else
     {
@@ -336,7 +336,7 @@ void data::insertBytes(byte *b, int n, int i)
 void data::overrideBytes(byte *b, int n, range &r)
 {
     if (r.upperBound() > count) {
-        std::cout << "Fatal error: Range out of bounds." << endl;
+        std::cout << "Fatal error: Range out of bounds." << std::endl;
         exit(1);
     }
     
@@ -359,11 +359,11 @@ void data::overrideBytes(byte *b, int n, range &r)
     }
     else if (count == maxCapacity - 1)
     {
-        std::cout << "Error: Attempted to insert a buffer of bytes when there is no more capacity." << endl;
+        std::cout << "Error: Attempted to insert a buffer of bytes when there is no more capacity." << std::endl;
     }
     else if (count + n == maxCapacity - 1)
     {
-        std::cout << "Error: Attempted to insert a buffer of bytes when it will exceed the capacity." << endl;
+        std::cout << "Error: Attempted to insert a buffer of bytes when it will exceed the capacity." << std::endl;
     }
     else
     {
@@ -389,7 +389,7 @@ void data::setCapacity(int n)
     
     if (n < -1 || n == 0)
     {
-        std::cout << "Fatal error: Attempted to set an invalid capacity." << endl;
+        std::cout << "Fatal error: Attempted to set an invalid capacity." << std::endl;
         exit(1);
     }
     
@@ -417,17 +417,17 @@ unsigned int data::size()
 
 double data::kSize()
 {
-    return static_cast<double>(size) / 1024.0;
+    return static_cast<double>(size()) / 1024.0;
 }
 
 double data::mSize()
 {
-    return static_cast<double>(kSize) / 1024.0;
+    return static_cast<double>(kSize()) / 1024.0;
 }
 
 double data::gSize()
 {
-    return static_cast<double>(mSize) / 1024.0;
+    return static_cast<double>(mSize()) / 1024.0;
 }
 
 /** Private Member Functions **/
@@ -438,7 +438,7 @@ void data::allocate()
     int n = internalCapacity * 2;
     
     if (maxCapacity != -1)
-        n = max(maxCapacity, n); // Constraints to maxCapacity
+        n = std::max(maxCapacity, n); // Constraints to maxCapacity
     
     byte *tmp = new byte[n];
     memcpy(tmp, bytes, count + 1);
@@ -452,13 +452,13 @@ void data::allocate()
 
 std::istream & operator>>(std::istream &in, data &d)
 {
-    string s;
+    std::string s;
     in >> s;
     return in;
 }
 
 std::ostream& operator<<(std::ostream &out, data &d)
 {
-    out << "<" << d.bytes << "> " << d.size << " bytes";
+    out << "<" << d.bytes << "> " << d.size() << " bytes";
     return out;
 }
