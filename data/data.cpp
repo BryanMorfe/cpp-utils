@@ -464,7 +464,18 @@ void data::setCapacity(int n)
     else
     {
         byte *tmp = new byte[n];
-        (n < internalCapacity) ? memcpy(tmp, bytes, n) : memcpy(tmp, bytes, count + 1);
+        if (n - 1 < count)
+        {
+            for (int i = 0; i < n; i++)
+                tmp[i] = bytes[i];
+            count = n - 1;
+        }
+        else
+        {
+            for (int i = 0; i <= count; i++)
+                tmp[i] = bytes[i];
+        }
+        
         delete [] bytes;
         bytes = tmp;
         maxCapacity = n;
