@@ -408,6 +408,44 @@ void data::overrideBytes(byte *b, int n, range &r)
     }
 }
 
+void data::removeByteAt(int i)
+{
+    if (i > count)
+    {
+        std::cout << "Fatal error: Attempted to remove a byte out of bounds." << std::endl;
+        exit(1);
+    }
+    
+    byte *tmp = new byte[internalCapacity];
+    for (int j = 0; j < i; j++)
+        tmp[j] = bytes[j];
+    
+    for (int j = i + 1; j <= count; j++)
+        tmp[j - 1] = bytes[j];
+    
+    delete [] bytes;
+    bytes = tmp;
+}
+
+void data::removeBytesIn(data::range r)
+{
+    if (r.upperBound() > count)
+    {
+        std::cout << "Fatal error: Attempted to remove bytes out of bounds." << std::endl;
+        exit(1);
+    }
+    
+    byte *tmp = new byte[internalCapacity];
+    for (int i = 0; j < r.lowerBound(); i++)
+        tmp[i] = bytes[i];
+    
+    for (int i = r.upperBound() + 1; i <= count; i++)
+        tmp[i - r.rangeDistance()] = bytes[i];
+    
+    delete [] bytes;
+    bytes = tmp;
+}
+
 void data::setCapacity(int n)
 {
     
