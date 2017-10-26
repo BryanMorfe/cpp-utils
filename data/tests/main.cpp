@@ -37,6 +37,8 @@ int main()
     data d2(bytes, 7);
     std::cout << "Loaded..." << std::endl;
     std::cout << d2 << std::endl;
+    std::cout << "The bytes look like this:" << std::endl;
+    printDataBuffer(d2);
     std::cout << "Let's get a digest and hex digest representation:" << std::endl;
     std::cout << "Digest: " << d2.digest() << std::endl;
     std::cout << "Hex Digest: " << d2.hexDigest() << std::endl;
@@ -54,7 +56,7 @@ int main()
     
     std::cout << "The bytes in that range currently are:" << std::endl;
     byte *bInRange = d2.bytesInRange(r);
-    for(int i = 0; i < r.rangeDistance(); i++)
+    for(int i = 0; i < r.rangeDistance() + 1; i++)
         std::cout << bInRange[i] << "  ";
     std::cout << std::endl;
     delete [] bInRange;
@@ -68,7 +70,7 @@ int main()
     // Testing capacities
     std::cout << "Now let's test capacities by creating a data obj with a capacity of 10 bytes:" << std::endl;
     data d3(10);
-    std::cout << "The capacity of the buffer is " << d3.Capacity() << " bytes." << std::endl;
+    std::cout << "The capacity of the buffer is " << d3.bufferCapacity() << " bytes." << std::endl;
     std::cout << "Let's add a buffer of bytes that looks like this: {5, 7, 3, 6}" << std::endl;
     byte b4[] = {5, 7, 3, 6};
     d3.insertBytes(b4, 4, 0); // Insert at the beginning
@@ -77,8 +79,34 @@ int main()
     d3.insertBytes(b5, 6, d3.size()); // Insert at the end
     std::cout << "The data now looks like this:" << std::endl;
     printDataBuffer(d3);
-    std::cout << "Now we will attempt to add more bytes:" << std::endl;
+    std::cout << "Now we will attempt to append and prepend a byte:" << std::endl;
     d3.appendByte(3);
+    d3.prependByte(3);
+    std::cout << "Now let's remove the bytes at i = 3 and i = 4, and then the range(0,3)" << std::endl;
+    d3.removeByteAt(3);
+    d3.removeByteAt(4);
+    data::range r2(0, 3);
+    d3.removeBytesIn(r2);
+    std::cout << "The data now looks like this:" << std::endl;
+    printDataBuffer(d3);
+    std::cout << std::endl;
+    std::cout << "Now let's append 3 bytes: 55, 66, 77:" << std::endl;
+    d3.appendByte(55);
+    d3.appendByte(66);
+    d3.appendByte(77);
+    std::cout << "The data now looks like this:" << std::endl;
+    printDataBuffer(d3);
+    std::cout << std::endl;
+    
+    std::cout << "Now let's change the capacity to only 5 bytes." << std::endl;
+    d3.setCapacity(5);
+    std::cout << "The capacity of the buffer is now " << d3.bufferCapacity() << " bytes." << std::endl;
+    std::cout << "The data now looks like this:" << std::endl;
+    printDataBuffer(d3);
+    std::cout << "Now we will attempt to append and prepend a byte:" << std::endl;
+    d3.appendByte(3);
+    d3.prependByte(3);
+    
     return 0;
 }
 
