@@ -88,7 +88,8 @@ data::data(byte *b, int n)
     maxCapacity = -1;
     internalCapacity = n;
     filePath = "";
-    memcpy(bytes, b, n);
+    for(int i = 0; i < n; i++)
+        bytes[i] = b[i];
     count = n - 1;
 }
 
@@ -98,8 +99,9 @@ data::data(data &d)
     maxCapacity = d.maxCapacity;
     internalCapacity = d.internalCapacity;
     filePath = d.filePath;
-    bytes = new byte[count + 1];
-    memcpy(bytes, d.bytes, count + 1);
+    bytes = new byte[d.internalCapacity];
+    for(int i = 0; i < count + 1; i++)
+        bytes[i] = d.bytes[i];
 }
 
 data::data(int n)
@@ -274,7 +276,8 @@ void data::prependByte(byte b)
             tmp[i + 1] = bytes[i];
         count++;
         delete [] bytes;
-        memcpy(bytes, tmp, count + 1);
+        for(int i = 0; i < count + 1; i++)
+            bytes[i] = tmp[i];
     }
     
 }
@@ -295,17 +298,21 @@ void data::insertBytes(byte *b, int n, int i)
     {
         while (count + n > internalCapacity - 1)
             allocate();
+        
         byte *tmp = new byte[internalCapacity];
-        memcpy(tmp, bytes, i);
+        
+        for(int j = 0; j < i; j++)
+            tmp[j] = bytes[j];
         
         for (int j = 0; j < n; j++)
             tmp[j + i] = b[j];
         
-        for(int j = i + 1; j < count; j++)
-            tmp[j + n - 1] = bytes[j];
+        for(int j = i; j <= count; j++)
+            tmp[j + n] = bytes[j];
         
         delete [] bytes;
         bytes = tmp;
+        count += n;
     }
     else if (count == maxCapacity - 1)
     {
@@ -320,16 +327,19 @@ void data::insertBytes(byte *b, int n, int i)
         while (count + n > internalCapacity - 1)
             allocate();
         byte *tmp = new byte[internalCapacity];
-        memcpy(tmp, bytes, i);
+        
+        for(int j = 0; j < i; j++)
+            tmp[j] = bytes[j];
         
         for (int j = 0; j < n; j++)
             tmp[j + i] = b[j];
         
-        for(int j = i + 1; j < count; j++)
-            tmp[j + n - 1] = bytes[j];
+        for(int j = i; j <= count; j++)
+            tmp[j + n] = bytes[j];
         
         delete [] bytes;
         bytes = tmp;
+        count += n;
     }
 }
 
@@ -346,16 +356,23 @@ void data::overrideBytes(byte *b, int n, range &r)
             allocate();
         
         byte *tmp = new byte[internalCapacity];
-        memcpy(tmp, bytes, r.lowerBound());
+        
+        int i;
+        for (i = 0; i < r.lowerBound(); i++)
+            tmp[i] = bytes[i];
         
         for (int j = 0; j < n; j++)
             tmp[j + r.lowerBound()] = b[j];
         
-        for(int j = r.upperBound(); j < count; j++)
-            tmp[j + n - 1] = bytes[j];
+        for(int j = r.upperBound() + 1; j <= count; j++)
+        {
+            tmp[i + n] = bytes[j];
+            i++;
+        }
         
         delete [] bytes;
         bytes = tmp;
+        count += n - r.rangeDistance() - 1;
     }
     else if (count == maxCapacity - 1)
     {
@@ -371,16 +388,23 @@ void data::overrideBytes(byte *b, int n, range &r)
             allocate();
         
         byte *tmp = new byte[internalCapacity];
-        memcpy(tmp, bytes, r.lowerBound());
+        
+        int i;
+        for (i = 0; i < r.lowerBound(); i++)
+            tmp[i] = bytes[i];
         
         for (int j = 0; j < n; j++)
             tmp[j + r.lowerBound()] = b[j];
         
-        for(int j = r.upperBound(); j < count; j++)
-            tmp[j + n - 1] = bytes[j];
+        for(int j = r.upperBound() + 1; j <= count; j++)
+        {
+            tmp[i + n] = bytes[j];
+            i++;
+        }
         
         delete [] bytes;
         bytes = tmp;
+        count += n - r.rangeDistance() - 1;
     }
 }
 
@@ -430,6 +454,11 @@ double data::gSize()
     return static_cast<double>(mSize()) / 1024.0;
 }
 
+int data::bufferCapacity()
+{
+    return maxCapacity;
+}
+
 /** Private Member Functions **/
 
 void data::allocate()
@@ -441,7 +470,8 @@ void data::allocate()
         n = std::max(maxCapacity, n); // Constraints to maxCapacity
     
     byte *tmp = new byte[n];
-    memcpy(tmp, bytes, count + 1);
+    for (int i = 0; i < count + 1; i++)
+        tmp[i] = bytes[i];
     delete [] bytes;
     bytes = tmp;
     internalCapacity = n;
