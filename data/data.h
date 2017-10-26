@@ -17,6 +17,8 @@ class data {
     friend std::ostream& operator<<(std::ostream &out, data &d);
     // Postcontidition: Displays the amount of bytes in the data object.
     
+public:
+    
     class range {
     public:
         range(int l, int u);
@@ -36,8 +38,6 @@ class data {
         int upper;      // Upper bound.
         int distance;   // Distance between the lower and upper bound.
     };
-    
-public:
     
     /*** Constructors & Destructors ***/
     data();
@@ -104,10 +104,19 @@ public:
     // Postcondition: Overrides the bytes in the range with the passed bytes.
     //                And resizes if necessary (and there is no capacity limit).
     
+    void removeByteAt(int i);
+    // Precondition: i must be between 0 and the amount of bytes in the buffer
+    // Postcondition: Removes the byte located at bytes[i].
+    
+    void removeBytesIn(range r);
+    // Precondition: The specified upper bound of the range must be not exceed the amount of bytes in the buffer.
+    // Postcondition: Removes the buffer of bytes in the specified range.
+    
     void setCapacity(int n);
     // Precondition: Capacity must be -1 (for no limit), or greater than 0.
-    // Postcondition: Sets a maximum capacity or no limits. If capacity is less than the current buffer the extra bytes lost after resizing.
-    //                Contents of old buffer is copied into new buffer of bytes with capacity n.
+    // Postcondition: Sets a maximum capacity or no limits. If capacity is less than the current buffer
+    //                the extra bytes lost after resizing. Contents of old buffer is copied into new
+    //                buffer of bytes with capacity n.
     
     /*** Size information ***/
     unsigned int size();
@@ -122,7 +131,7 @@ public:
     double gSize();
     // Postcondition: Returns the size in gigabytes of the data obj.
     
-    double Capacity();
+    int bufferCapacity();
     // Postcondition: Returns the capacity of the buffer, or -1 if there is no maximum capacity.
     
 protected:
@@ -134,7 +143,7 @@ private:
     int count;              // The amount of bytes.
     int internalCapacity;   // The current buffer capacity.
     int maxCapacity;        // The maximum allowed allocation of bytes.
-    std::string filePath;        // An optional filePath if loaded from a file.
+    std::string filePath;   // An optional filePath if loaded from a file.
 };
 
 #endif
