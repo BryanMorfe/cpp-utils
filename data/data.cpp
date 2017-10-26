@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <sstream>
+#include <iomanip>
 #include <cstdlib>
 #include "data.h"
 
@@ -47,7 +49,7 @@ data::data()
     filePath = "";
 }
 
-data::data(string fpath)
+data::data(std::string fpath)
 {
     std::ifstream ifile(fpath.c_str(), std::ifstream::binary);
     
@@ -116,17 +118,17 @@ data::data(int n)
     filePath = "";
 }
 
-data::data(int nBytes)
-{
-    bytes = new byte[n];
-    count = n - 1;
-    for (int i = 0; i < n; i++)
-        bytes[i] = 0;
-    
-    filePath = "";
-    maxCapacity = -1;
-    internalCapacity = n;
-}
+//data::data(int nBytes)
+//{
+//    bytes = new byte[n];
+//    count = n - 1;
+//    for (int i = 0; i < n; i++)
+//        bytes[i] = 0;
+//
+//    filePath = "";
+//    maxCapacity = -1;
+//    internalCapacity = n;
+//}
 
 data::~data()
 {
@@ -137,9 +139,9 @@ data::~data()
 }
 
 /*** Representation of buffer of bytes ***/
-string data::digest()
+std::string data::digest()
 {
-    string d = "";
+    std::string d = "";
     for(int i = 0; i <= count; i++) {
         d += char(bytes[i]);
     }
@@ -147,9 +149,14 @@ string data::digest()
     return d;
 }
 
-string data::hexDigest()
+std::string data::hexDigest()
 {
-    // Make compatible with with c++ 98
+    std::stringstream ss;
+    
+    for(int i = 0; i <= count; i++)
+        ss << std::hex << std::setfill('0') << std::setw(2) << bytes[i];
+    
+    return ss.str()
 }
 
 /*** File manipulation ***/
@@ -164,7 +171,7 @@ void data::save()
         
         if(ofile)
         {
-            string str = digest();
+            std::string str = digest();
             ofstream.write(str.c_str(), str.length());
             ofstream.close();
         }
@@ -176,7 +183,7 @@ void data::save()
     
 }
 
-void data::saveToPath(string fpath)
+void data::saveToPath(std::string fpath)
 {
     filePath = fpath;
     save();
@@ -339,12 +346,12 @@ void data::overrideBytes(byte *b, int n, range &r)
             allocate();
         
         byte *tmp = new byte[internalCapacity];
-        memcpy(tmp, bytes, i);
+        memcpy(tmp, bytes, r.lowerBound());
         
         for (int j = 0; j < n; j++)
-            tmp[j + i] = b[j];
+            tmp[j + r.lowerBound()] = b[j];
         
-        for(int j = i + 1; j < count; j++)
+        for(int j = r.upperBound(); j < count; j++)
             tmp[j + n - 1] = bytes[j];
         
         delete [] bytes;
@@ -362,13 +369,14 @@ void data::overrideBytes(byte *b, int n, range &r)
     {
         while (count + n > internalCapacity - 1)
             allocate();
+        
         byte *tmp = new byte[internalCapacity];
-        memcpy(tmp, bytes, i);
+        memcpy(tmp, bytes, r.lowerBound());
         
         for (int j = 0; j < n; j++)
-            tmp[j + i] = b[j];
+            tmp[j + r.lowerBound()] = b[j];
         
-        for(int j = i + 1; j < count; j++)
+        for(int j = r.upperBound(); j < count; j++)
             tmp[j + n - 1] = bytes[j];
         
         delete [] bytes;
@@ -441,3 +449,16 @@ void data::allocate()
 
 
 /** Friend Functions **/
+
+std::istream & operator>>(std::istream &in, data &d)
+{
+    string s;
+    in >> s;
+    return in;
+}
+
+std::ostream& operator<<(std::ostream &out, data &d)
+{
+    out << "<" << d.bytes << "> " << d.size << " bytes";
+    return out;
+}

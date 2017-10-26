@@ -43,7 +43,7 @@ public:
     data();
     // Postcondition: Creates an empty data object.
     
-    data(string fpath);
+    data(std::string fpath);
     // Precondition: A file must exist in the specified path.
     // Postcondition: Loaded the content of the file in the specified path.
     
@@ -57,18 +57,14 @@ public:
     // Precondition: Must be > 0 or == -1.
     // Postcondition: Sets maximum capacity to n, or no limitations if n = -1.
     
-    data(int nBytes);
-    // Precondition: Must be greater than 0;
-    // Postcondition: Creates a buffer with nBytes zeroed bytes.
-    
     ~data();
     // Postcondition: Destroys the buffer of bytes and prevents memory leaks.
     
     /*** Representation of buffer of bytes ***/
-    string digest();
+    std::string digest();
     // Postcontidition: Returns a string of bytes.
     
-    string hexDigest();
+    std::string hexDigest();
     // Postcontidition: Returns a string of bytes in hex format.
     
     /*** File manipulation ***/
@@ -76,7 +72,7 @@ public:
     // Precondition: Must have been loaded from a file.
     // Postcondition: Overrides the currently loaded file with the new bytes.
     
-    void saveToPath(string fpath);
+    void saveToPath(std::string fpath);
     // Precondition: A valid filePath must be passed.
     // Postcondition: Creates a new file in the specified path and saves it with the content of the data obj.
     
@@ -138,7 +134,7 @@ private:
     int count;              // The amount of bytes.
     int internalCapacity;   // The current buffer capacity.
     int maxCapacity;        // The maximum allowed allocation of bytes.
-    string filePath;        // An optional filePath if loaded from a file.
+    std::string filePath;        // An optional filePath if loaded from a file.
 };
 
 #endif
