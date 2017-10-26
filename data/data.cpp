@@ -425,6 +425,7 @@ void data::removeByteAt(int i)
     
     delete [] bytes;
     bytes = tmp;
+    count--;
 }
 
 void data::removeBytesIn(data::range r)
@@ -436,7 +437,7 @@ void data::removeBytesIn(data::range r)
     }
     
     byte *tmp = new byte[internalCapacity];
-    for (int i = 0; j < r.lowerBound(); i++)
+    for (int i = 0; i < r.lowerBound(); i++)
         tmp[i] = bytes[i];
     
     for (int i = r.upperBound() + 1; i <= count; i++)
@@ -444,6 +445,7 @@ void data::removeBytesIn(data::range r)
     
     delete [] bytes;
     bytes = tmp;
+    count -= r.rangeDistance() + 1;
 }
 
 void data::setCapacity(int n)
